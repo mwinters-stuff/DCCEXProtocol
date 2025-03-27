@@ -29,8 +29,7 @@
 #ifndef DCCEXTURNTABLES_H
 #define DCCEXTURNTABLES_H
 
-#include <Arduino.h>
-
+namespace DCCExController {
 enum TurntableType {
   TurntableTypeDCC = 0,
   TurntableTypeEXTT = 1,
@@ -187,5 +186,6 @@ private:
   /// @param turntable Pointer to the turntable to remove
   void _removeFromList(Turntable *turntable);
 };
+} // namespace DCCExController
 
 #endif

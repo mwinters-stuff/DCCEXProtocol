@@ -18,17 +18,17 @@ else()
   target_include_directories(DCCEXProtocol SYSTEM PUBLIC src)
 endif()
 
-# Fetch ArduinoCore-API
-if(NOT TARGET ArduinoCore-API)
-  FetchContent_Declare(
-    ArduinoCore-API
-    GIT_REPOSITORY https://github.com/arduino/ArduinoCore-API
-    GIT_TAG 1.4.0)
-  FetchContent_Populate(ArduinoCore-API)
-  find_package(ArduinoCore-API)
-endif()
+# # Fetch ArduinoCore-API
+# if(NOT TARGET ArduinoCore-API)
+#   FetchContent_Declare(
+#     ArduinoCore-API
+#     GIT_REPOSITORY https://github.com/arduino/ArduinoCore-API
+#     GIT_TAG 1.4.0)
+#   FetchContent_Populate(ArduinoCore-API)
+#   find_package(ArduinoCore-API)
+# endif()
 
-target_link_libraries(DCCEXProtocol PUBLIC ArduinoCore-API)
+# target_link_libraries(DCCEXProtocol PUBLIC ArduinoCore-API)
 
 foreach(FILE ${SRC})
   message(${FILE})
@@ -36,7 +36,7 @@ endforeach()
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SRC})
 
-if(PROJECT_IS_TOP_LEVEL)
-  add_subdirectory(docs)
-  add_subdirectory(tests)
-endif()
+# if(PROJECT_IS_TOP_LEVEL)
+#   add_subdirectory(docs)
+#   add_subdirectory(tests)
+# endif()

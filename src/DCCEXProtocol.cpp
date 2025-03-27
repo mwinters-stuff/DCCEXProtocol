@@ -41,6 +41,12 @@ Function/method prefixes
 
 #include "DCCEXProtocol.h"
 
+#include <cstdio>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+namespace DCCExController {
 static const int MIN_SPEED = 0;
 static const int MAX_SPEED = 126;
 
@@ -80,14 +86,14 @@ DCCEXProtocol::~DCCEXProtocol() {
 void DCCEXProtocol::setDelegate(DCCEXProtocolDelegate *delegate) { this->_delegate = delegate; }
 
 // Set the Stream used for logging
-void DCCEXProtocol::setLogStream(Stream *console) { this->_console = console; }
+void DCCEXProtocol::setLogStream(DCCStream *console) { this->_console = console; }
 
 void DCCEXProtocol::enableHeartbeat(unsigned long heartbeatDelay) {
   _enableHeartbeat = true;
   _heartbeatDelay = heartbeatDelay;
 }
 
-void DCCEXProtocol::connect(Stream *stream) {
+void DCCEXProtocol::connect(DCCStream *stream) {
   _init();
   this->_stream = stream;
 }
@@ -409,7 +415,7 @@ bool DCCEXProtocol::receivedRouteList() { return _receivedRouteList; }
 void DCCEXProtocol::startRoute(int routeId) {
   // console->println(F("sendRouteAction()"));
   if (_delegate) {
-    sprintf(_outboundCommand, "</ START %d>", routeId);
+    sprintf(_outboundCommand, "</START  %d >", routeId);
     _sendCommand();
   }
   // console->println(F("sendRouteAction() end"));
@@ -706,24 +712,26 @@ void DCCEXProtocol::_init() {
   memset(_inputBuffer, 0, sizeof(_inputBuffer));
   _nextChar = 0;
   // last Response time
-  _lastServerResponseTime = millis();
+  if (_delegate) {
+    _lastServerResponseTime = _delegate->millis();
+  }
   // console->println(F("init(): end"));
 }
 
 void DCCEXProtocol::_sendCommand() {
-  if (_stream) {
+  if (_stream && _delegate) {
     _stream->println(_outboundCommand);
     _console->print("==> ");
     _console->println(_outboundCommand);
-    *_outboundCommand = 0;     // clear it once it has been sent
-    _lastHeartbeat = millis(); // If we sent a command, a heartbeat isn't necessary
+    *_outboundCommand = 0;                // clear it once it has been sent
+    _lastHeartbeat = _delegate->millis(); // If we sent a command, a heartbeat isn't necessary
   }
 }
 
 void DCCEXProtocol::_processCommand() {
   if (_delegate) {
     // last Response time
-    _lastServerResponseTime = millis();
+    _lastServerResponseTime = _delegate->millis();
 
     switch (DCCEXInbound::getOpcode()) {
     case '@': // Screen update
@@ -907,8 +915,8 @@ void DCCEXProtocol::_processScreenUpdate() { //<@ screen row "message">
 }
 
 void DCCEXProtocol::_sendHeartbeat() {
-  if (millis() - _lastHeartbeat > _heartbeatDelay) {
-    _lastHeartbeat = millis();
+  if (_delegate && _delegate->millis() - _lastHeartbeat > _heartbeatDelay) {
+    _lastHeartbeat = _delegate->millis();
     sprintf(_outboundCommand, "<#>");
     _sendCommand();
   }
@@ -1427,3 +1435,5 @@ void DCCEXProtocol::_processWriteCVResponse() { // <r cv value>, value -1 = erro
   int value = DCCEXInbound::getNumber(1);
   _delegate->receivedWriteCV(cv, value);
 }
+
+} // namespace DCCExController

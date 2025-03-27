@@ -28,8 +28,11 @@
  */
 
 #include "DCCEXLoco.h"
-#include <Arduino.h>
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
 
+namespace DCCExController {
 // class Loco
 // Public methods
 
@@ -456,3 +459,4 @@ void Consist::_addLocoToConsist(ConsistLoco *conLoco) {
   }
   _locoCount++;
 }
+} // namespace DCCExController

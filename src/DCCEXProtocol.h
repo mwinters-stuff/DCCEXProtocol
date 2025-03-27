@@ -100,8 +100,11 @@ Version information:
 #include "DCCEXRoutes.h"
 #include "DCCEXTurnouts.h"
 #include "DCCEXTurntables.h"
-#include <Arduino.h>
+#include "DCCStream.h"
 
+#include <stddef.h>
+
+namespace DCCExController {
 const int MAX_OUTBOUND_COMMAND_LENGTH = 100; // Max number of bytes for outbound commands
 
 // Valid track power state values
@@ -121,14 +124,14 @@ enum TrackManagerMode {
 };
 
 /// @brief Nullstream class for initial DCCEXProtocol instantiation to direct streams to nothing
-class NullStream : public Stream {
+class NullStream : public DCCStream {
 public:
   /// @brief Constructor for the NullStream object
   NullStream() {}
 
   /// @brief Dummy availability check
   /// @return Returns false (0) always
-  int available() { return 0; }
+  int available() const { return 0; }
 
   /// @brief Dummy flush method
   void flush() {}
@@ -151,6 +154,9 @@ public:
   /// @param size Size of buffer
   /// @return Returns size of buffer always
   size_t write(const uint8_t *buffer, size_t size) { return size; }
+
+  void println(const char *format, ...) {}
+  void print(const char *format, ...) {}
 };
 
 /// @brief Delegate responses and broadcast events to the client software to enable custom event handlers
@@ -244,6 +250,8 @@ public:
   /// @param row Row number
   /// @param message Message to display on the screen/row
   virtual void receivedScreenUpdate(int screen, int row, char *message) {}
+
+  virtual uint32_t millis() { return 0; }
 };
 
 /// @brief Main class for the DCCEXProtocol library
@@ -265,7 +273,7 @@ public:
 
   /// @brief Set the stream object for console output
   /// @param console
-  void setLogStream(Stream *console);
+  void setLogStream(DCCStream *console);
 
   /// @brief Enable heartbeat if required - can help WiFi connections that drop out
   /// @param heartbeatDelay Time in milliseconds between heartbeats - defaults to one minute (60000ms)
@@ -273,7 +281,7 @@ public:
 
   /// @brief Connect the stream object to interact with DCC-EX
   /// @param stream
-  void connect(Stream *stream);
+  void connect(DCCStream *stream);
 
   /// @brief Disconnect from DCC-EX
   void disconnect();
@@ -681,8 +689,8 @@ private:
   int _routeCount = 0;                                // Count of route objects received
   int _turntableCount = 0;                            // Count of turntable objects received
   int _version[3] = {};                               // EX-CommandStation version x.y.z
-  Stream *_stream;                                    // Stream object where commands are sent/received
-  Stream *_console;                                   // Stream object for console output
+  DCCStream *_stream;                                    // Stream object where commands are sent/received
+  DCCStream *_console;                                   // Stream object for console output
   NullStream _nullStream;                             // Send streams to null if no object provided
   int _bufflen;                                       // Used to ensure command buffer size not exceeded
   int _maxCmdBuffer;                                  // Max size for the command buffer
@@ -706,5 +714,7 @@ private:
   unsigned long _heartbeatDelay;                      // Delay between heartbeats if enabled
   unsigned long _lastHeartbeat;                       // Time in ms of the last heartbeat, also set by sending a command
 };
+
+} // namespace DCCExController
 
 #endif // DCCEXPROTOCOL_H

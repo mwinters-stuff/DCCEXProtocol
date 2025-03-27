@@ -27,10 +27,10 @@
  */
 
 #include "DCCEXTurntables.h"
-#include <Arduino.h>
+#include <string.h>
 
 // class TurntableIndex
-
+namespace DCCExController {
 TurntableIndex::TurntableIndex(int ttId, int id, int angle, const char *name) {
   _ttId = ttId;
   _id = id;
@@ -231,3 +231,4 @@ void Turntable::_removeFromList(Turntable *turntable) {
     }
   }
 }
+} // namespace DCCExController

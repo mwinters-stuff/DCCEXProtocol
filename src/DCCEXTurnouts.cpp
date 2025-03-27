@@ -27,8 +27,10 @@
  */
 
 #include "DCCEXTurnouts.h"
-#include <Arduino.h>
 
+#include <string.h>
+
+namespace DCCExController {
 Turnout *Turnout::_first = nullptr;
 
 Turnout::Turnout(int id, bool thrown) {
@@ -139,3 +141,4 @@ void Turnout::_removeFromList(Turnout *turnout) {
     }
   }
 }
+} // namespace DCCExController

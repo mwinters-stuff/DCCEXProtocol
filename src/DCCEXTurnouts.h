@@ -29,8 +29,7 @@
 #ifndef DCCEXTURNOUTS_H
 #define DCCEXTURNOUTS_H
 
-#include <Arduino.h>
-
+namespace DCCExController {
 /// @brief Class to contain and maintain the various Turnout/Point attributes and methods
 class Turnout {
 public:
@@ -93,5 +92,7 @@ private:
   /// @param turnout Pointer to the turnout to remove
   void _removeFromList(Turnout *turnout);
 };
+
+} // namespace DCCExController
 
 #endif

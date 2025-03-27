@@ -29,8 +29,7 @@
 #ifndef DCCEXROUTES_H
 #define DCCEXROUTES_H
 
-#include <Arduino.h>
-
+namespace DCCExController {
 enum RouteType {
   RouteTypeRoute = 'R',
   RouteTypeAutomation = 'A',
@@ -96,5 +95,5 @@ private:
   /// @param route Pointer to the route to remove
   void _removeFromList(Route *route);
 };
-
+} // namespace DCCExController
 #endif

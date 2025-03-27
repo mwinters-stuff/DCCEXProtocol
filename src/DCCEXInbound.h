@@ -30,7 +30,7 @@
 #ifndef DCCEXINBOUND_H
 #define DCCEXINBOUND_H
 
-#include <Arduino.h>
+#include <inttypes.h>
 
 /* How to use this:
   1) setup is done once with your expected max parameter count.
@@ -40,7 +40,7 @@
   3) Use the get... functions to access the parameters.
   These parameters are ONLY VALID until you next call parse.
 */
-
+namespace DCCExController {
 /// @brief Inbound DCC-EX command parser class to parse commands and provide interpreted parameters
 class DCCEXInbound {
 public:
@@ -58,7 +58,7 @@ public:
   static bool parse(char *command);
 
   /// @brief Gets the DCC-EX OPCODE of the parsed command (the first char after the <)
-  static byte getOpcode();
+  static uint8_t getOpcode();
 
   /// @brief Gets number of parameters detected after OPCODE  <JR 1 2 3> is 4 parameters!
   /// @return Number of parameters
@@ -86,15 +86,15 @@ public:
 
   /// @brief dump list of parameters obtained
   /// @param out Address of output e.g. &Serial
-  static void dump(Print *);
+  // static void dump(Print *);
 
 private:
   static int16_t _maxParams;
   static int16_t _parameterCount;
-  static byte _opcode;
+  static uint8_t _opcode;
   static int32_t *_parameterValues;
   static char *_cmdBuffer;
   static bool _isTextInternal(int16_t n);
 };
-
+} // namespace DCCExController
 #endif

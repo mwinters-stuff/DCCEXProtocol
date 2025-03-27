@@ -27,10 +27,11 @@
  */
 
 #include "DCCEXRoutes.h"
-#include <Arduino.h>
+
+#include <string.h>
 
 // Public methods
-
+namespace DCCExController {
 Route *Route::_first = nullptr;
 
 Route::Route(int id) {
@@ -140,3 +141,4 @@ void Route::_removeFromList(Route *route) {
     }
   }
 }
+} // namespace DCCExController
